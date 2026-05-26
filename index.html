@@ -667,7 +667,7 @@ nav {
   letter-spacing: 0.14em; text-transform: uppercase;
   color: #1a1a18;
   border: 1px solid var(--border-mid);
-  background: rgba(244,150,12,0.75); cursor: pointer;
+  background: var(--mark); cursor: pointer;
   padding: 0.65rem 1.25rem;
   position: relative; overflow: hidden;
   transition: border-color 0.18s, color 0.18s;
@@ -693,7 +693,7 @@ nav {
   65% { opacity: 1; }
   85% { left: 140%; opacity: 0; }
 }
-.crosslink-btn:hover { border-color: var(--mark); color: var(--mark); }
+.crosslink-btn:hover { border-color: var(--mark); color: var(--mark); opacity: 0.85; }
 .crosslink-btn svg { width: 10px; height: 10px; }
 
 /* ══════════════════════════════════════════════════════
@@ -1493,7 +1493,7 @@ footer {
 <div class="crosslink">
   <p class="crosslink-intro">Revisa la implementación de sensores y las superficies de captura aquí:</p>
   <button class="crosslink-btn" onclick="switchTab('sensores')">
-    <span style="color: rgba(0,0,0,0.85); font-weight: 500;">Sensores e instrumentación</span>
+    <span style="color: #000; font-weight: 500;">Sensores e instrumentación</span>
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
   </button>
 </div>
