@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo Vigilance · Trace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #141412; --bg-raised: #1C1C19; --border: rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.12); --text-hi: #F0EDE6;
+  --text-mid: rgba(240,237,230,0.55); --text-lo: rgba(240,237,230,0.28);
+  --mark: #F4960C; --mark-dim: rgba(244,150,12,0.1); --mark-glow: rgba(244,150,12,0.2);
+  --amber: rgba(200,160,40,0.9);
+  --display: 'Bebas Neue', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif; --max: 900px; --nav-h: 52px;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text-hi); font-family: var(--sans);
+  font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+
+}
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem;
+  background: rgba(20,20,18,0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-logo { font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.12em;
+  color: var(--text-hi); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.nav-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--mark);
+  box-shadow: 0 0 8px var(--mark-glow); flex-shrink: 0; }
+.nav-back { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-mid); text-decoration: none;
+  display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
+.nav-back:hover { color: var(--mark); }
+.nav-back svg { width: 11px; height: 11px; }
+
+.page { padding-top: var(--nav-h); }
+.inner { max-width: var(--max); margin: 0 auto; padding: 0 2.5rem; }
+
+.proto-header { padding: 4.5rem 0 3rem; border-bottom: 1px solid var(--border); }
+.proto-header-grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  position: relative;
+}
+.proto-eyebrow { font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--mark); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.75rem; }
+.proto-eyebrow::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--mark); }
+.proto-num { font-family: var(--display); font-size: 4rem; line-height: 0.85;
+  color: rgba(255,255,255,0.06); user-select: none; margin-bottom: 0.5rem; }
+.proto-title { font-family: var(--sans); font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 200; letter-spacing: -0.03em; color: var(--text-hi); line-height: 1; margin-bottom: 0.6rem; }
+.proto-domain { font-family: var(--mono); font-size: 0.54rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--mark); opacity: 0.65; margin-bottom: 1.5rem; }
+.proto-intro { font-size: 0.95rem; font-weight: 300; color: var(--text-mid);
+  line-height: 1.9; text-align: justify; hyphens: auto; }
+
+.replay-window {
+  position: fixed;
+  top: calc(var(--nav-h) + 2rem);
+  right: 2.5rem;
+  width: 240px;
+  z-index: 250;
+}
+.replay-label { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-lo); margin-bottom: 0.5rem; }
+.replay-frame { width: 100%; aspect-ratio: 16/10; background: #080807; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.6); }
+.replay-frame video { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85; }
+.replay-caption { font-family: var(--mono); font-size: 0.44rem; letter-spacing: 0.08em;
+  color: var(--text-lo); margin-top: 0.5rem; line-height: 1.5; }
+
+.sec { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+.sec:last-child { border-bottom: none; padding-bottom: 6rem; }
+.sec-label { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--mark); margin-bottom: 1.75rem;
+  display: flex; align-items: center; gap: 0.6rem; }
+.sec-label::before { content: ''; display: inline-block; width: 14px; height: 1px; background: var(--mark); }
+
+.body-text { font-size: 0.92rem; font-weight: 300; color: var(--text-mid); line-height: 1.95;
+  text-align: justify; hyphens: auto; }
+.body-text p + p { margin-top: 1rem; }
+.body-text strong { color: var(--text-hi); font-weight: 400; }
+
+/* SDT taxonomy block */
+.sdt-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--border); margin-bottom: 2rem;
+}
+.sdt-cell { padding: 1.25rem 1.5rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.sdt-cell:nth-child(even) { border-right: none; }
+.sdt-cell:nth-last-child(-n+2) { border-bottom: none; }
+.sdt-tag { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.14em;
+  text-transform: uppercase; margin-bottom: 0.4rem; }
+.sdt-tag.signal { color: rgba(80,200,120,0.8); }
+.sdt-tag.noise { color: rgba(200,160,40,0.8); }
+.sdt-title { font-family: var(--sans); font-size: 0.88rem; font-weight: 400;
+  color: var(--text-hi); margin-bottom: 0.3rem; letter-spacing: -0.01em; }
+.sdt-desc { font-size: 0.78rem; font-weight: 300; color: var(--text-lo); line-height: 1.6; }
+
+.metrics-doc { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); }
+.metric-doc-item { padding: 1.5rem; border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); transition: background 0.2s; }
+.metric-doc-item:nth-child(even) { border-right: none; }
+.metric-doc-item:nth-last-child(-n+2) { border-bottom: none; }
+.metric-doc-item:hover { background: rgba(255,255,255,0.015); }
+/* For odd total count, handle last item spanning */
+.metric-doc-item.span-full { grid-column: 1 / -1; border-right: none; }
+.metric-doc-name { font-family: var(--mono); font-size: 0.68rem; font-weight: 500;
+  color: var(--text-hi); letter-spacing: 0.02em; margin-bottom: 0.5rem; }
+.metric-doc-abbr { font-family: var(--mono); font-size: 0.52rem; color: var(--mark);
+  letter-spacing: 0.06em; margin-bottom: 0.35rem; display: block; }
+.metric-doc-desc { font-size: 0.82rem; font-weight: 300; color: var(--text-lo);
+  line-height: 1.7; text-align: justify; hyphens: auto; }
+.metric-doc-ref { font-family: var(--mono); font-size: 0.46rem; color: rgba(244,150,12,0.4);
+  letter-spacing: 0.06em; margin-top: 0.6rem; display: block; }
+
+/* Decrement timeline — illustrative */
+.decrement-concept {
+  border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 2rem;
+  background: rgba(255,255,255,0.01);
+}
+.dc-concept-label { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-lo); margin-bottom: 1rem; }
+.dc-concept-row { display: grid; grid-template-columns: 80px 1fr; gap: 1rem; align-items: center;
+  margin-bottom: 0.6rem; }
+.dc-concept-row:last-child { margin-bottom: 0; }
+.dc-concept-metric { font-family: var(--mono); font-size: 0.54rem; color: var(--text-lo);
+  letter-spacing: 0.04em; }
+.dc-concept-bar-wrap { position: relative; height: 4px; background: rgba(255,255,255,0.05); }
+.dc-concept-bar {
+  position: absolute; top: 0; left: 0; height: 100%;
+  transition: width 0.8s ease;
+}
+.dc-concept-arrow { font-family: var(--mono); font-size: 0.48rem; color: var(--text-lo);
+  margin-left: 0.5rem; white-space: nowrap; position: absolute; right: 0; top: -0.85rem; }
+
+.use-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  border: 1px solid var(--border); margin-bottom: 2rem; }
+.use-case { padding: 1.5rem; border-right: 1px solid var(--border); }
+.use-case:last-child { border-right: none; }
+.use-case-icon { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--mark); margin-bottom: 0.65rem; opacity: 0.7; }
+.use-case-title { font-family: var(--sans); font-size: 0.88rem; font-weight: 400;
+  color: var(--text-hi); margin-bottom: 0.35rem; letter-spacing: -0.01em; }
+.use-case-desc { font-size: 0.78rem; font-weight: 300; color: var(--text-lo); line-height: 1.65; }
+
+.limit-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
+.limit-item { display: grid; grid-template-columns: 28px 1fr; gap: 1rem;
+  padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--border); align-items: start; }
+.limit-item:last-child { border-bottom: none; }
+.limit-marker { font-family: var(--mono); font-size: 0.52rem; color: var(--text-lo); padding-top: 0.15rem; }
+.limit-text { font-size: 0.85rem; font-weight: 300; color: var(--text-mid); line-height: 1.7; }
+.limit-text strong { color: var(--text-hi); font-weight: 400; }
+
+.extensions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.ext-item { padding: 1.5rem; border: 1px solid var(--border); background: rgba(255,255,255,0.01);
+  transition: border-color 0.2s, background 0.2s; }
+.ext-item:hover { border-color: rgba(244,150,12,0.2); background: rgba(244,150,12,0.02); }
+.ext-tag { font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--mark); opacity: 0.6; margin-bottom: 0.5rem; }
+.ext-title { font-family: var(--sans); font-size: 0.9rem; font-weight: 400;
+  color: var(--text-hi); margin-bottom: 0.4rem; letter-spacing: -0.01em; }
+.ext-desc { font-size: 0.8rem; font-weight: 300; color: var(--text-lo); line-height: 1.65; }
+
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+@media (max-width: 820px) {
+  .inner { padding: 0 1.25rem; } nav { padding: 0 1.25rem; }
+  .proto-header-grid { grid-template-columns: 1fr; }
+  .replay-window { display: none; }
+  .sdt-grid { grid-template-columns: 1fr; }
+  .sdt-cell { border-right: none; }
+  .metrics-doc { grid-template-columns: 1fr; }
+  .metric-doc-item { border-right: none; }
+  .metric-doc-item:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
+  .metric-doc-item:last-child { border-bottom: none; }
+  .use-cases { grid-template-columns: 1fr; }
+  .use-case { border-right: none; border-bottom: 1px solid var(--border); }
+  .use-case:last-child { border-bottom: none; }
+  .extensions-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../trace_portfolio_final.html" class="nav-back">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+    Volver
+  </a>
+</nav>
+
+<div class="page"><div class="inner">
+
+  <!-- ── HEADER ── -->
+  <div class="proto-header reveal">
+    <div class="proto-header-grid">
+      <div>
+        <div class="proto-eyebrow">Protocolo · 03</div>
+        <div class="proto-num">03</div>
+        <h1 class="proto-title">Degradación Atencional<br>en Monitorización Continua</h1>
+        <div class="proto-domain">Vigilance · Atención sostenida · SDT · Decremento de vigilancia</div>
+        <p class="proto-intro">
+          Protocolo orientado a evaluar el decremento de vigilancia y la degradación del
+          rendimiento en tareas de monitorización prolongada. Mide la capacidad del usuario
+          para detectar señales relevantes en un entorno con estímulos de ruido a lo largo del tiempo,
+          cuantificando sensibilidad discriminativa y criterio de decisión mediante la Teoría de
+          Detección de Señales. Los estímulos son propios de la interfaz evaluada, sin overlays
+          experimentales, lo que garantiza validez ecológica de la medición.
+        </p>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- ── PRINCIPIO ── -->
+  <div class="sec reveal">
+    <div class="sec-label">Decremento de vigilancia</div>
+    <div class="body-text">
+      <p>
+        La <strong>vigilancia</strong> se define como la capacidad para detectar señales relevantes en una tarea de
+        monitorización continua. Esta capacidad puede degradarse de forma sistemática con el tiempo, especialmente
+        cuando la frecuencia de estimulación es baja y el entorno es monótono.
+      </p>
+      <p>
+        Tiene consecuencias directas en entornos operacionales críticos: operadores de sonar,
+        controladores de tráfico aéreo, técnicos de vigilancia o monitores de procesos industriales
+        trabajan en condiciones donde un evento de baja frecuencia pero alta consecuencia puede
+        pasar desapercibido justamente en momentos de mayor fatiga o disminución de recursos atencionales.
+      </p>
+      <p>
+        El protocolo evalúa este fenómeno midiendo cómo evolucionan la <strong>sensibilidad
+        discriminativa</strong> (d'), el <strong>criterio de respuesta</strong> (β) y el
+        <strong>tiempo de reacción</strong> a lo largo de ventanas temporales sucesivas dentro
+        de la misma sesión.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── CONFIGURACIÓN SDT ── -->
+  <div class="sec reveal">
+    <div class="sec-label">Taxonomía de estímulos · Teoría de Detección de Señales</div>
+    <div class="body-text" style="margin-bottom:1.5rem;">
+      <p>
+        Antes de la sesión se configura qué eventos de la interfaz constituyen <strong>estímulos
+        señal</strong> (el usuario debe responder) y cuáles son <strong>catch</strong> o ruido
+        (requieren ausencia de respuesta). Esta distinción es la base del análisis SDT y permite separar
+        la sensibilidad real del usuario de su tendencia a responder a cualquier estímulo presente.
+      </p>
+    </div>
+    <div class="sdt-grid">
+      <div class="sdt-cell">
+        <div class="sdt-tag signal">Señal presente · Responde</div>
+        <div class="sdt-title">Acierto (Hit)</div>
+        <div class="sdt-desc">El usuario detecta correctamente el estímulo objetivo. Refleja sensibilidad real y atención activa sobre la interfaz.</div>
+      </div>
+      <div class="sdt-cell">
+        <div class="sdt-tag noise">Señal ausente · Responde</div>
+        <div class="sdt-title">Falsa alarma (FA)</div>
+        <div class="sdt-desc">El usuario responde ante un estímulo catch. Indica sesgo liberal o reducción del criterio de decisión, no alta sensibilidad.</div>
+      </div>
+      <div class="sdt-cell">
+        <div class="sdt-tag noise">Señal presente · No responde</div>
+        <div class="sdt-title">Miss</div>
+        <div class="sdt-desc">El usuario no detecta el estímulo objetivo. Puede indicar pérdida de atención, fatiga o umbral de decisión demasiado conservador.</div>
+      </div>
+      <div class="sdt-cell">
+        <div class="sdt-tag signal">Señal ausente · No responde</div>
+        <div class="sdt-title">Rechazo correcto (CR)</div>
+        <div class="sdt-desc">El usuario ignora correctamente el estímulo catch. Comportamiento esperado y necesario para mantener una FA rate baja.</div>
+      </div>
+    </div>
+    <div class="body-text">
+      <p>
+        La separación entre hits y falsas alarmas es relevante en estos contextos, pues un usuario con muchos aciertos
+        pero también muchas falsas alarmas no tiene alta sensibilidad, tiene un <strong>criterio
+        de respuesta bajo</strong>. SDT segrega estos dos factores, que tienen implicaciones
+        muy distintas para el diseño del sistema y la formación o capacitación del usuario.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── MÉTRICAS ── -->
+  <div class="sec reveal">
+    <div class="sec-label">Métricas SDT extraídas</div>
+    <div class="metrics-doc">
+      <div class="metric-doc-item">
+        <span class="metric-doc-abbr">d'</span>
+        <div class="metric-doc-name">Índice de sensibilidad</div>
+        <div class="metric-doc-desc">
+          Distancia entre las distribuciones de señal y ruido en la escala de decisión
+          del usuario. Cuantifica la capacidad real de discriminación independientemente
+          del criterio de respuesta. Valores altos indican alta discriminabilidad;
+          d' cercano a cero implica que señal y ruido son perceptualmente indistinguibles.
+        </div>
+        <span class="metric-doc-ref">Teoría de Detección de Señales · Green & Swets, 1966</span>
+      </div>
+      <div class="metric-doc-item">
+        <span class="metric-doc-abbr">β</span>
+        <div class="metric-doc-name">Criterio de decisión</div>
+        <div class="metric-doc-desc">
+          Umbral que el usuario aplica antes de emitir una respuesta. Independiente
+          de la sensibilidad: β &gt; 1 indica sesgo conservador (evita falsas alarmas,
+          puede perderse señales débiles); β &lt; 1 indica sesgo liberal (responde
+          ante evidencia mínima, genera más falsas alarmas).
+        </div>
+        <span class="metric-doc-ref">Teoría de Detección de Señales · Green & Swets, 1966</span>
+      </div>
+      <div class="metric-doc-item">
+        <span class="metric-doc-abbr">Hit rate / FA rate</span>
+        <div class="metric-doc-name">Tasas de respuesta por ventana</div>
+        <div class="metric-doc-desc">
+          Proporción de aciertos y falsas alarmas calculada por ventana temporal.
+          Su evolución a lo largo de la sesión permite detectar cuándo empieza
+          a degradarse la detección: hit rate decreciente con FA rate estable
+          señala pérdida de sensibilidad, no cambio de criterio.
+        </div>
+      </div>
+      <div class="metric-doc-item">
+        <span class="metric-doc-abbr">RT slope</span>
+        <div class="metric-doc-name">Pendiente del tiempo de reacción</div>
+        <div class="metric-doc-desc">
+          Evolución del tiempo de respuesta a lo largo de las ventanas temporales.
+          Una pendiente positiva (RT creciente) indica ralentización progresiva:
+          proxy de fatiga atencional y decremento de vigilancia. Es el indicador
+          más sensible al inicio del decremento antes de que se manifieste en d'.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VALIDEZ ECOLÓGICA ── -->
+  <div class="sec reveal">
+    <div class="sec-label">Validez ecológica · estímulos nativos</div>
+    <div class="body-text">
+      <p>
+        La mayoría de protocolos de vigilancia en laboratorio usan estímulos artificiales
+        superpuestos sobre la tarea: destellos, tonos o cambios de color que no forman parte
+        de la propia interfaz. Esto facilita el control experimental pero reduce la validez
+        ecológica, ya que el usuario sabe que está siendo evaluado con estímulos ajenos a la interfaz.
+      </p>
+      <p>
+        En este protocolo, <strong>los estímulos son nativos de la interfaz</strong>. La señal
+        y el ruido son eventos propios del entorno evaluado, definidos por el investigador.
+        El usuario interactúa con la interfaz tal como lo haría en condiciones reales.
+      </p>
+      <p>
+        Esto permite evaluar el decremento en el contexto exacto en que ocurrirá en la práctica,
+        obteniendo medidas de alto valor ecológico (en comparación con otros métodos experimentales) que pueden
+        dar lugar a recomendaciones de diseño o de gestión operacional.
+      </p>
+    </div>
+  </div>
+
+</div></div>
+
+<script>
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+</script>
+
+
+
+<div class="replay-window">
+  <div class="replay-label">Sesión de vigilancia</div>
+        <div class="replay-frame">
+          <video src="../media/video_vigilance.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <p class="replay-caption">
+          El usuario detecta contactos reales entre estímulos catch sobre la interfaz.
+          Los estímulos son nativos del entorno, sin overlays.
+        </p>
+</div>
+</body>
+</html>

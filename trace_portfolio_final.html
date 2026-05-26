@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trace — Andrés Angarita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════
+   RESET & TOKENS
+══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #141412;   /* pizarra oscura cálida, no negro total */
+  --bg-raised:  #1C1C19;   /* superficie elevada sutil */
+  --bg-glass:   rgba(28,28,25,0.7);
+  --border:     rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.12);
+  --text-hi:    #F0EDE6;   /* blanco cálido */
+  --text-mid:   rgba(240,237,230,0.72);
+  --text-lo:    rgba(240,237,230,0.42);
+  --mark:       #F4960C;
+  --mark-dim:   rgba(244,150,12,0.1);
+  --mark-glow:  rgba(244,150,12,0.2);
+  --green:      rgba(80,200,120,0.85);
+  --amber:      rgba(200,160,40,0.85);
+  --display: 'Bebas Neue', sans-serif;
+  --mono:    'IBM Plex Mono', monospace;
+  --sans:    'IBM Plex Sans', system-ui, sans-serif;
+  --max:     1200px;
+  --nav-h:   52px;
+  --pad:     2.5rem;
+}
+
+html { scroll-behavior: smooth; }
+
+/* Global paragraph justification */
+.hero-sub, .hero-bio, .proto-desc, .sensors-desc,
+.sensor-desc, .subsection-desc, .trace-desc,
+.contact-sub, .metric-desc {
+  text-align: justify;
+  hyphens: auto;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-hi);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /* grain texture */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-mid); }
+
+/* ══════════════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--pad);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: rgba(20,20,18,0.92);
+  backdrop-filter: blur(20px);
+}
+
+.nav-logo {
+  font-family: var(--display);
+  font-size: 1.3rem; letter-spacing: 0.12em;
+  color: var(--text-hi); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+  line-height: 1;
+}
+.nav-pip {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mark);
+  flex-shrink: 0;
+  box-shadow: 0 0 8px var(--mark-glow);
+}
+
+.nav-right { display: flex; align-items: center; gap: 2rem; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-lo); text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--text-hi); }
+
+.nav-contact {
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--mark); text-decoration: none;
+  border: 1px solid rgba(244,150,12,0.3);
+  padding: 0.38rem 0.85rem;
+  transition: background 0.18s, border-color 0.18s;
+}
+.nav-contact:hover { background: var(--mark-dim); border-color: var(--mark); }
+
+/* ══════════════════════════════════════════════════════
+   HERO — full-width opening statement
+══════════════════════════════════════════════════════ */
+.hero {
+  padding-top: var(--nav-h);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 7rem var(--pad) 6rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 5rem;
+  align-items: end;
+}
+
+.hero-left {}
+
+.hero-kicker {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--mark);
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.hero-kicker::before {
+  content: '';
+  display: block; width: 28px; height: 1px;
+  background: var(--mark);
+}
+
+.hero-title {
+  font-family: var(--sans);
+  font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--text-hi);
+  margin-bottom: 2rem;
+}
+
+.hero-sub {
+  font-size: 1rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.9;
+  max-width: 640px;
+}
+.hero-sub strong { color: var(--text-hi); font-weight: 400; }
+
+.hero-right {
+  padding-bottom: 0.25rem;
+}
+
+.hero-author-block {
+  border-left: 1px solid var(--border-mid);
+  padding-left: 2rem;
+  margin-bottom: 2.5rem;
+}
+.hero-author-name {
+  font-family: var(--sans); font-size: 0.95rem; font-weight: 500;
+  color: var(--text-hi); letter-spacing: -0.01em;
+  margin-bottom: 0.35rem;
+}
+.hero-author-role {
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-lo); line-height: 1.8;
+}
+
+.hero-bio {
+  font-size: 0.95rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.85;
+  border-left: 1px solid var(--border);
+  padding-left: 2rem;
+}
+.hero-bio strong { color: rgba(240,237,230,0.75); font-weight: 400; }
+
+/* ══════════════════════════════════════════════════════
+   TRACE SECTION — separada del hero
+══════════════════════════════════════════════════════ */
+.trace-section {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.trace-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 6rem var(--pad) 7rem;
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 5rem;
+  align-items: start;
+}
+.trace-left {}
+.trace-kicker {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mark); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.65rem;
+}
+.trace-kicker::before {
+  content: ''; display: block;
+  width: 20px; height: 1px; background: var(--mark);
+}
+.trace-title {
+  font-family: var(--sans);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 300; letter-spacing: -0.025em; line-height: 1;
+  color: var(--text-hi);
+  margin-bottom: 2rem;
+}
+.trace-desc {
+  font-size: 1rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.9;
+  max-width: 560px;
+}
+.trace-desc strong { color: var(--text-hi); font-weight: 400; }
+
+/* Carousel */
+.trace-carousel {
+  position: relative;
+}
+.carousel-frame {
+  width: 100%;
+  aspect-ratio: 16/10;
+  background: #080807;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 8px 32px rgba(0,0,0,0.55);
+}
+.carousel-frame img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.carousel-frame img.active { opacity: 1; }
+.carousel-progress {
+  display: flex; gap: 4px; margin-top: 0.85rem;
+}
+.carousel-dot {
+  flex: 1; height: 2px;
+  background: rgba(255,255,255,0.12);
+  position: relative; overflow: hidden;
+}
+.carousel-dot-fill {
+  position: absolute; inset: 0;
+  background: var(--mark);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.carousel-dot.active .carousel-dot-fill {
+  animation: dotProgress 6s linear forwards;
+}
+@keyframes dotProgress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@media (max-width: 1000px) {
+  .trace-inner { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+
+#workspace {
+  position: sticky; top: var(--nav-h); z-index: 200;
+  background: rgba(20,20,18,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 var(--pad);
+  display: flex; align-items: stretch; gap: 0;
+}
+
+.tab-btn {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  font-weight: 400;
+  padding: 0 2rem;
+  height: 48px;
+  background: none; border: none; cursor: pointer;
+  color: rgba(240,237,230,0.45);
+  position: relative;
+  transition: color 0.2s;
+  display: flex; align-items: center; gap: 0.65rem;
+  white-space: nowrap;
+}
+.tab-btn::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--mark);
+  transform: scaleX(0);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  transform-origin: left;
+}
+.tab-btn:hover { color: rgba(240,237,230,0.75); }
+.tab-btn.active { color: var(--text-hi); font-weight: 500; letter-spacing: 0.12em; }
+.tab-btn.active::after { transform: scaleX(1); }
+
+.tab-num {
+  font-size: 0.58rem; letter-spacing: 0.05em;
+  color: rgba(240,237,230,0.35); opacity: 1;
+}
+.tab-btn.active .tab-num { color: var(--mark); opacity: 1; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ══════════════════════════════════════════════════════
+   SECTION WRAPPER
+══════════════════════════════════════════════════════ */
+.section {
+  max-width: var(--max); margin: 0 auto;
+  padding: 7rem var(--pad) 8rem;
+}
+
+.section-header {
+  display: flex; align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-family: var(--sans);
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 300; letter-spacing: -0.02em;
+  color: var(--text-hi); line-height: 1.1;
+}
+.section-meta {
+  font-family: var(--mono); font-size: 0.56rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-lo);
+}
+
+/* ══════════════════════════════════════════════════════
+   PROTOCOL CARDS
+   Layout: número izq | contenido dcha
+   Métricas y PDF van DEBAJO del media en fila horizontal
+══════════════════════════════════════════════════════ */
+/* .protocol-block movido a EFECTOS ADICIONALES */
+
+/* Left column — number */
+
+/* Right column — all content */
+.proto-main {}
+
+.proto-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  gap: 2rem;
+}
+
+.proto-name {
+  font-family: var(--sans); font-size: 2.2rem; font-weight: 200;
+  letter-spacing: -0.03em; text-transform: none;
+  color: var(--text-hi);
+  line-height: 1;
+  text-shadow: 0 0 40px rgba(240,237,230,0.08);
+  transition: text-shadow 0.35s ease, color 0.2s;
+}
+.proto-name-link {
+  text-decoration: none; color: inherit;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+
+.proto-arrow-icon { display: none; }
+
+
+.proto-ver {
+  font-family: var(--mono); font-size: 0.56rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--mark); text-decoration: none; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 0.75rem;
+  border: 1px solid rgba(244,150,12,0.3);
+  padding: 0.5rem 1rem;
+  transition: border-color 0.18s, gap 0.18s;
+}
+.proto-ver:hover { border-color: var(--mark); gap: 12px; }
+.proto-ver svg { width: 9px; height: 9px; }
+
+
+.proto-status {
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 5px;
+  flex-shrink: 0; padding-top: 0.1rem;
+  color: var(--green);
+}
+.proto-status::before {
+  content: '';
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+  animation: blink 2.5s ease infinite;
+}
+.proto-status.amber { color: var(--amber); }
+.proto-status.amber::before { background: var(--amber); }
+@keyframes blink {
+  0%,100% { opacity:1; } 50% { opacity:0.3; }
+}
+
+/* Task switcher — inline pill style */
+.task-switcher {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 0.85rem;
+}
+.task-label {
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-lo); margin-right: 4px;
+}
+.task-pill {
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.06em; font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-mid);
+  background: transparent;
+  color: var(--text-lo);
+  cursor: pointer;
+  border-radius: 99px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.task-pill:hover { color: var(--text-mid); border-color: rgba(255,255,255,0.2); }
+.task-pill.active {
+  color: var(--text-hi);
+  border-color: var(--mark);
+  background: var(--mark-dim);
+}
+
+/* Media block — full width, with shadow to lift from bg */
+.proto-media {
+  width: 100%; aspect-ratio: 16/6.5;
+  background: #080807;
+  overflow: hidden; cursor: zoom-in;
+  position: relative;
+  margin-bottom: 2rem;
+  /* Shadow to separate from dark bg */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 8px 32px rgba(0,0,0,0.55),
+    0 2px 8px rgba(0,0,0,0.4);
+}
+.proto-media.tall { aspect-ratio: 16/9; }
+.proto-media img, .proto-media video {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.5s ease, opacity 0.2s ease;
+}
+.proto-media:hover img, .proto-media:hover video { transform: scale(1.012); }
+
+.expand-badge { display: none; }
+
+/* PDF inline — al lado del proto-desc */
+.proto-desc-row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 2.5rem;
+  margin-bottom: 2.25rem;
+  align-items: start;
+}
+.proto-desc-row .proto-desc {
+  margin-bottom: 0;
+}
+.proto-pdf-inline {
+  padding-top: 0.25rem;
+}
+.proto-pdf-inline .pdf-thumb {
+  aspect-ratio: 4/3;
+}
+
+.proto-desc {
+  font-size: 1rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.9;
+  margin-bottom: 2.25rem;
+  max-width: 760px;
+}
+
+/* ── Bottom row: metrics only ── */
+.proto-bottom {
+  display: block;
+  margin-top: 1.5rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.pdf-col { display: none !important; }
+
+.proto-bottom-label {
+  font-family: var(--mono); font-size: 0.56rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-lo); margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.proto-bottom-label.report-label {
+  color: var(--mark);
+  opacity: 0.85;
+  font-weight: 500;
+}
+.proto-bottom-label .auto-badge {
+  font-size: 0.46rem;
+  letter-spacing: 0.1em;
+  color: rgba(244,150,12,0.55);
+  border: 1px solid rgba(244,150,12,0.2);
+  padding: 0.1rem 0.4rem;
+  background: rgba(244,150,12,0.05);
+  border-radius: 2px;
+}
+
+
+/* Metrics — horizontal grid when space allows */
+.metrics-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.proto-domain {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(240,237,230,0.32);
+  margin-top: 0.55rem;
+  margin-bottom: 0.85rem;
+}
+.metric-item {
+  padding: 1.1rem 1.25rem;
+  background: var(--bg);
+}
+.metric-name {
+  font-family: var(--mono); font-size: 0.64rem; font-weight: 500;
+  color: var(--text-hi); letter-spacing: 0.03em;
+  margin-bottom: 0.4rem;
+}
+.metric-desc {
+  font-size: 0.85rem; font-weight: 300;
+  color: var(--text-lo); line-height: 1.6;
+}
+
+/* PDF thumbnail — with shadow, filter, and PDF badge */
+.pdf-col {}
+
+.pdf-thumb {
+  overflow: hidden; cursor: pointer;
+  position: relative;
+  background: #0a0a09;
+  aspect-ratio: 4/3;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 6px 24px rgba(0,0,0,0.5),
+    0 2px 6px rgba(0,0,0,0.35);
+  transition: box-shadow 0.3s ease;
+}
+/* Glass reflection layer */
+.pdf-thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.04) 30%,
+    transparent 55%,
+    rgba(255,255,255,0.02) 100%
+  );
+  transition: opacity 0.35s ease;
+}
+.pdf-thumb:hover::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.18) 0%,
+    rgba(255,255,255,0.06) 30%,
+    transparent 55%,
+    rgba(255,255,255,0.03) 100%
+  );
+}
+.pdf-thumb:hover {
+  box-shadow:
+    0 0 0 1px rgba(244,150,12,0.35),
+    0 8px 32px rgba(0,0,0,0.6),
+    0 2px 8px rgba(0,0,0,0.4),
+    0 0 20px rgba(244,150,12,0.06);
+}
+.pdf-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top;
+  display: block;
+  transition: transform 0.35s ease;
+  filter: brightness(0.82) saturate(0.7) sepia(0.08);
+}
+.pdf-thumb:hover img { transform: scale(1.03); filter: brightness(0.9) saturate(0.75); }
+
+/* PDF badge — always visible top-left */
+.pdf-badge {
+  position: absolute; top: 10px; left: 12px; z-index: 2;
+  font-family: var(--mono); font-size: 0.5rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.08);
+  padding: 0.18rem 0.5rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px) saturate(1.4);
+}
+
+/* PDF hover-hint bottom-right */
+.pdf-hint {
+  position: absolute; bottom: 0; right: 0;
+  font-family: var(--mono); font-size: 0.48rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  background: var(--mark); color: #000; font-weight: 500;
+  padding: 0.25rem 0.55rem;
+  opacity: 0; transition: opacity 0.2s;
+}
+.pdf-thumb:hover .pdf-hint { opacity: 1; }
+
+.pdf-open {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-lo); cursor: pointer;
+  background: none; border: none; padding: 0;
+  margin-top: 0.75rem;
+  transition: color 0.15s;
+}
+.pdf-open:hover { color: var(--mark); }
+.pdf-open svg { width: 9px; height: 9px; }
+
+/* ══════════════════════════════════════════════════════
+   TAB CROSSLINK
+══════════════════════════════════════════════════════ */
+.crosslink {
+  border-top: 1px solid var(--border);
+  padding: 3rem var(--pad);
+  max-width: var(--max); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+}
+.crosslink-intro {
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-lo);
+}
+.crosslink-btn {
+  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #1a1a18;
+  border: 1px solid var(--border-mid);
+  background: rgba(244,150,12,0.75); cursor: pointer;
+  padding: 0.65rem 1.25rem;
+  position: relative; overflow: hidden;
+  transition: border-color 0.18s, color 0.18s;
+}
+/* Auto-shimmer every 4s */
+.crosslink-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.12),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: crosslink-shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes crosslink-shimmer {
+  0%, 60%, 100% { left: -75%; opacity: 0; }
+  65% { opacity: 1; }
+  85% { left: 140%; opacity: 0; }
+}
+.crosslink-btn:hover { border-color: var(--mark); color: var(--mark); }
+.crosslink-btn svg { width: 10px; height: 10px; }
+
+/* ══════════════════════════════════════════════════════
+   SENSORES TAB
+══════════════════════════════════════════════════════ */
+.sensors-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+  align-items: end;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+.sensors-intro-left {
+  padding-right: 0;
+}
+.sensors-intro-right {
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.sensors-title {
+  font-family: var(--sans);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 200; letter-spacing: -0.03em; line-height: 0.95;
+  color: var(--text-hi); margin-bottom: 0;
+}
+.sensors-desc {
+  font-size: 1rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.9;
+}
+
+/* Canal número — decorativo inline */
+.sensor-ch {
+  font-family: var(--mono); font-size: 0.54rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mark); opacity: 0.7;
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+.sensor-ch::before {
+  content: ''; display: inline-block;
+  width: 14px; height: 1px; background: var(--mark); flex-shrink: 0;
+}
+
+.sensors-stat {
+  font-family: var(--display);
+  font-size: 4rem; line-height: 1;
+  letter-spacing: 0.04em; color: var(--text-hi);
+  margin-bottom: 0.25rem;
+}
+.sensors-stat-label {
+  font-family: var(--mono); font-size: 0.56rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-lo);
+}
+
+/* Sensor grid — 2 columns */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.sensor-col {
+  padding: 3rem 3rem 3rem 0;
+  border-right: 1px solid var(--border);
+}
+.sensor-col:last-child {
+  padding: 3rem 0 3rem 3rem;
+  border-right: none;
+}
+
+.sensor-media-block {
+  width: 100%; aspect-ratio: 16/10;
+  background: #080807;
+  overflow: hidden; cursor: zoom-in; position: relative;
+  margin-bottom: 1.75rem;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 8px 32px rgba(0,0,0,0.55),
+    0 2px 8px rgba(0,0,0,0.4);
+}
+.sensor-media-block img, .sensor-media-block video {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.4s ease;
+}
+.sensor-media-block:hover img,
+.sensor-media-block:hover video { transform: scale(1.015); }
+
+.sensor-name {
+  font-family: var(--sans); font-size: 1.5rem; font-weight: 200;
+  letter-spacing: -0.025em; color: var(--text-hi);
+  margin-bottom: 0.65rem; line-height: 1.1;
+}
+.sensor-desc {
+  font-size: 0.95rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.85;
+  margin-bottom: 1.25rem;
+}
+
+/* Data card — dark inset, terminal aesthetic */
+.data-card {
+  background: #0a0a09;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  position: relative;
+}
+/* Terminal scan-line effect sutil */
+.data-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255,255,255,0.008) 3px,
+    rgba(255,255,255,0.008) 4px
+  );
+  pointer-events: none;
+}
+.dc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+}
+.dc-title {
+  font-family: var(--mono); font-size: 0.48rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(240,237,230,0.3);
+}
+.dc-badge {
+  font-family: var(--mono); font-size: 0.5rem;
+  letter-spacing: 0.08em; color: var(--mark); font-weight: 500;
+  background: rgba(244,150,12,0.08);
+  padding: 0.12rem 0.45rem;
+  border: 1px solid rgba(244,150,12,0.2);
+}
+.dc-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--mono); font-size: 0.58rem;
+}
+.dc-table thead tr {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.015);
+}
+.dc-table th {
+  padding: 0.4rem 1rem;
+  text-align: left; color: rgba(240,237,230,0.25);
+  font-weight: 400; letter-spacing: 0.1em;
+  white-space: nowrap; text-transform: uppercase; font-size: 0.46rem;
+}
+.dc-table th:not(:first-child) { text-align: right; }
+.dc-table td {
+  padding: 0.4rem 1rem;
+  color: rgba(240,237,230,0.3);
+}
+.dc-table td:not(:first-child) { text-align: right; }
+.dc-table tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.03); }
+.dc-table tbody tr:hover td { background: rgba(255,255,255,0.025); color: rgba(240,237,230,0.5); }
+.dc-hi { color: rgba(240,237,230,0.75) !important; }
+.dc-alert { color: var(--mark) !important; }
+.dc-plot {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer; overflow: hidden; max-height: 100px;
+  position: relative;
+}
+.dc-plot img {
+  width: 100%; display: block; object-fit: cover; object-position: top;
+  transition: transform 0.3s ease; opacity: 0.65;
+}
+.dc-plot:hover img { transform: scale(1.02); opacity: 0.9; }
+.dc-chart {
+  background: #060605;
+  padding: 0.8rem 1rem 0.5rem;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.dc-axis {
+  display: flex; justify-content: space-between;
+  margin-top: 0.35rem;
+}
+.dc-axis span {
+  font-family: var(--mono); font-size: 0.44rem;
+  color: rgba(255,255,255,0.15);
+}
+.dc-legend {
+  position: absolute; top: 0.8rem; right: 1rem;
+  display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+}
+.dc-legend span {
+  font-family: var(--mono); font-size: 0.44rem;
+  letter-spacing: 0.05em;
+}
+.dc-footer {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.01);
+}
+.dc-note {
+  font-family: var(--mono); font-size: 0.46rem;
+  color: var(--text-lo); letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════════════
+   SALIENCY + COMPARE — sensors tab subsections
+══════════════════════════════════════════════════════ */
+.subsection {
+  border-top: 1px solid var(--border);
+  padding-top: 4rem;
+  margin-top: 4rem;
+}
+.subsection-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 2rem;
+  align-items: end;
+}
+.subsection-kicker {
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mark); margin-bottom: 0.6rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.subsection-kicker::before {
+  content: ''; width: 14px; height: 1px; background: var(--mark);
+}
+.subsection-title {
+  font-family: var(--sans);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 200; letter-spacing: -0.025em; line-height: 1.05;
+  color: var(--text-hi);
+}
+.subsection-desc {
+  font-size: 0.95rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.85;
+  align-self: end;
+}
+
+.media-label-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.media-label-text {
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(240,237,230,0.3);
+}
+.media-badge {
+  font-family: var(--mono); font-size: 0.48rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--mark); font-weight: 500;
+  padding: 0.16rem 0.5rem;
+  border: 1px solid rgba(244,150,12,0.2);
+  background: rgba(244,150,12,0.05);
+}
+
+.saliency-iframe {
+  width: 100%; height: 480px;
+  border: none; display: block;
+  background: #080807;
+}
+
+.compare-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; background: var(--border);
+}
+.compare-pane {
+  background: #080807; position: relative;
+  overflow: hidden; aspect-ratio: 16/9; cursor: zoom-in;
+}
+.compare-pane img, .compare-pane video {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.4s ease;
+}
+.compare-pane:hover img, .compare-pane:hover video { transform: scale(1.015); }
+.compare-label {
+  position: absolute; top: 10px; left: 12px;
+  font-family: var(--mono); font-size: 0.5rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  background: rgba(0,0,0,0.45);
+  padding: 0.18rem 0.5rem;
+  backdrop-filter: blur(4px);
+}
+
+/* ══════════════════════════════════════════════════════
+   CONTACT
+══════════════════════════════════════════════════════ */
+.contact-wrap {
+  border-top: 1px solid var(--border);
+  background: var(--bg-raised);
+}
+.contact-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 6rem var(--pad);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem; align-items: center;
+}
+.contact-headline {
+  font-family: var(--mono);
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  line-height: 1.5; font-weight: 400;
+  color: rgba(240,237,230,0.28); margin-bottom: 1.5rem;
+}
+.contact-headline span { color: rgba(244,150,12,0.45); }
+.contact-sub {
+  font-size: 0.95rem; font-weight: 300;
+  color: var(--text-mid); line-height: 1.9;
+  max-width: 420px;
+}
+
+.contact-links { display: flex; flex-direction: column; }
+.contact-link {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.85rem 1.25rem;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
+  color: var(--text-lo); text-decoration: none;
+  border: 1px solid var(--border);
+  border-top: none;
+  transition: color 0.15s, border-color 0.15s, padding-left 0.2s;
+}
+.contact-link:first-child { border-top: 1px solid var(--border); }
+.contact-link:hover { color: var(--text-hi); border-color: var(--border-mid); padding-left: 1.6rem; }
+.contact-link svg { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.4; }
+.contact-link:hover svg { opacity: 0.8; }
+
+/* ══════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════ */
+footer {
+  padding: 1.5rem var(--pad);
+  background: var(--bg-raised);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-txt {
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-lo);
+}
+
+/* ══════════════════════════════════════════════════════
+   OVERLAY
+══════════════════════════════════════════════════════ */
+.overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(8,8,7,0.97);
+  align-items: center; justify-content: center;
+}
+.overlay.open { display: flex; }
+.overlay-inner {
+  position: relative; width: 92vw; height: 90vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.overlay-close {
+  position: absolute; top: -2.75rem; right: 0;
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #000; background: var(--mark);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0.4rem 0.85rem;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+.overlay-close:hover { opacity: 0.85; }
+.overlay-close kbd {
+  font-family: var(--mono); font-size: 0.5rem;
+  padding: 1px 5px;
+  border: 1px solid rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.15);
+}
+.overlay-media-wrap {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.overlay-media-wrap img,
+.overlay-media-wrap video {
+  max-width: 100%; max-height: 100%;
+  display: block; object-fit: contain;
+}
+.overlay-pdf-wrap { width: 100%; height: 100%; }
+.overlay-pdf-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+.overlay-cap {
+  position: absolute; bottom: -1.75rem; left: 0;
+  font-family: var(--mono); font-size: 0.5rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-lo);
+}
+
+/* ══════════════════════════════════════════════════════
+   EFECTOS ADICIONALES
+══════════════════════════════════════════════════════ */
+
+/* Línea decorativa izquierda en hover de protocolo */
+.protocol-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  padding: 4rem 0;
+  position: relative;
+}
+
+.protocol-block:first-child { border-top: none; padding-top: 0; }
+
+/* Proto-name con track de subrayado animado */
+.proto-name-link {
+  text-decoration: none; color: inherit;
+  display: inline-flex; align-items: flex-start; gap: 12px;
+  position: relative;
+}
+
+/* Metric items — sin hover (no son clickables) */
+.metric-item {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.metric-item:last-child { border-bottom: none; }
+
+/* PDF inline — compact label */
+.proto-pdf-inline .proto-bottom-label {
+  margin-bottom: 0.75rem;
+}
+
+
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 1000px) {
+
+  .proto-bottom { display: block; }
+  .proto-desc-row { grid-template-columns: 1fr; }
+  .proto-pdf-inline { display: flex; gap: 1.5rem; align-items: flex-start; }
+  .proto-pdf-inline .pdf-thumb { flex: 0 0 140px; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right { border-left: none; border-top: 1px solid var(--border); padding: 2rem 0 0; }
+  .sensors-intro { grid-template-columns: 1fr; }
+  .sensors-intro-left { padding-right: 0; }
+  .sensors-intro-right { padding-top: 2rem; }
+}
+@media (max-width: 700px) {
+  :root { --pad: 1.25rem; }
+  .nav-links { display: none; }
+  .hero-title { font-size: 4.5rem; }
+      .sensor-grid { grid-template-columns: 1fr; }
+  .sensor-col { padding: 2rem 0; border-right: none; border-bottom: 1px solid var(--border); }
+  .sensor-col:last-child { border-bottom: none; }
+  .contact-inner { grid-template-columns: 1fr; }
+  .compare-split { grid-template-columns: 1fr; }
+  .subsection-header { grid-template-columns: 1fr; }
+  .crosslink { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="nav-pip"></span>
+    Trace
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#workspace" onclick="switchTab('protocolos')">Protocolos</a></li>
+      <li><a href="#workspace" onclick="switchTab('sensores')">Sensores</a></li>
+    </ul>
+    <a href="#contacto" class="nav-contact">Contacto</a>
+  </div>
+</nav>
+
+<!-- ══ HERO — Sobre mí ══════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-left reveal">
+      <div class="hero-kicker">Psicología · Neurociencia Cognitiva · HCI · Ergonomía Cognitiva</div>
+      <h1 class="hero-title">Andrés<br>Angarita</h1>
+      <p class="hero-sub">
+        Psicólogo con máster en <strong>neurociencia cognitiva y del comportamiento</strong>,
+        con enfoque en <strong>ergonomía cognitiva</strong> e <strong>interacción humano-máquina</strong>.
+        Me interesa entender y optimizar el proceso de interacción y toma de decisiones de las personas
+        cuando utilizan <strong>sistemas tecnológicos</strong>, desde los de uso cotidiano hasta los especializados.
+        Trabajo en la intersección entre <strong>modelado conductual, identificación de patrones
+        de interacción y diseño de interfaces</strong>, buscando siempre la validez ecológica
+        de la medición.
+      </p>
+      <p class="hero-sub" style="margin-top:1rem">
+        Busco incorporarme a un entorno de investigación donde desarrollar esta línea
+        o poder contribuir mis capacidades a los proyectos del grupo.
+      </p>
+    </div>
+    <div class="hero-right reveal" style="transition-delay:0.12s">
+      <div class="hero-author-block">
+        <div class="hero-author-name">Andrés Angarita Noriega</div>
+        <div class="hero-author-role">
+          Psicólogo · Máster en Neurociencia Cognitiva<br>
+          Ergonomía cognitiva · HCI · Modelado conductual<br>
+          España
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRACE SECTION ════════════════════════════════════ -->
+<div class="trace-section">
+  <div class="trace-inner">
+    <div class="trace-left reveal">
+      <div class="trace-kicker">Proyecto de investigación · Telemetría conductual</div>
+      <h2 class="trace-title">Trace</h2>
+      <p class="trace-desc">
+        Sistema de telemetría conductual para el modelado del comportamiento de usuario
+        y la evaluación de interfaces en contextos variados. Soporta protocolos basados en
+        tareas dirigidas a objetivos, entornos inmersivos y monitorización atencional prolongada.
+        Captura eventos de interacción (trayectorias, gestos táctiles, tiempos de decisión)
+        y extrae métricas compuestas <strong>sin instrumentación invasiva</strong>, sobre cualquier interfaz
+        y sin modificar su lógica. Los protocolos pueden integrar módulos de sensores fisiológicos
+        para enriquecer la lectura cognitiva de la interacción.
+      </p>
+    </div>
+    <div class="trace-carousel reveal" style="transition-delay:0.12s">
+      <div class="carousel-frame">
+        <img src="media/trace_gif_1.gif" class="active" alt="Trace — interfaz 1">
+        <img src="media/trace_gif_2.gif" alt="Trace — interfaz 2">
+        <img src="media/trace_gif_3.gif" alt="Trace — interfaz 3">
+        <img src="media/trace_gif_4.gif" alt="Trace — interfaz 4">
+        <img src="media/trace_gif_5.gif" alt="Trace — interfaz 5">
+      </div>
+      <div class="carousel-progress" id="carousel-progress">
+        <div class="carousel-dot active"><div class="carousel-dot-fill"></div></div>
+        <div class="carousel-dot"><div class="carousel-dot-fill"></div></div>
+        <div class="carousel-dot"><div class="carousel-dot-fill"></div></div>
+        <div class="carousel-dot"><div class="carousel-dot-fill"></div></div>
+        <div class="carousel-dot"><div class="carousel-dot-fill"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB WORKSPACE ══════════════════════════════════════ -->
+<div id="workspace">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('protocolos')">
+      <span class="tab-num">01</span>
+      Protocolos aplicados
+    </button>
+    <button class="tab-btn" onclick="switchTab('sensores')">
+      <span class="tab-num">02</span>
+      Sensores e instrumentación
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     TAB 01 — PROTOCOLOS
+════════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-protocolos">
+<div class="section">
+
+  <!-- ── P01: TASK ── -->
+  <div class="protocol-block reveal">
+
+    <div class="proto-main">
+      <div class="proto-header">
+        <div>
+          <div class="proto-name">
+            <span>Evaluación de Usabilidad<br>en Interfaces 2D</span>
+          </div>
+          <div class="proto-domain">Task · Tarea dirigida · Modelamiento conductual · Usabilidad</div>
+          <a href="protocols/scada.html" class="proto-ver">Ver protocolo completo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </div>
+      </div>
+
+      <div class="task-switcher">
+        <span class="task-label">Tarea</span>
+        <button class="task-pill active" onclick="switchTask(this,'media/ID_02_task_1_replay.gif')">01</button>
+        <button class="task-pill" onclick="switchTask(this,'media/ID_02_task_2_replay.gif')">02</button>
+        <button class="task-pill" onclick="switchTask(this,'media/ID_02_task_3_replay.gif')">03</button>
+      </div>
+
+      <div class="proto-media" onclick="openMediaOverlay(this)" data-label="Protocolo Task · Replay conductual">
+        <img id="scada-replay" src="media/ID_02_task_1_replay.gif" alt="">
+        <span class="expand-badge">Expandir ↗</span>
+      </div>
+
+      <div class="proto-desc-row">
+        <p class="proto-desc">
+          Evalúa usabilidad y modela el comportamiento del usuario en interfaces 2D. Investiga la forma en que variables
+          como la densidad de información, la disposición de elementos o las decisiones de diseño modulan los
+          patrones de interacción. El sistema calcula automáticamente las métricas respecto al objetivo de la
+          tarea (previa configuración), permitiendo comparar perfiles conductuales entre tareas,
+          usuarios o condiciones de diseño.
+        </p>
+        <div class="proto-pdf-inline">
+          <div class="proto-bottom-label report-label">Reporte de sesión <span class="auto-badge">Autogenerado</span></div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_tasks.pdf','Reporte · AQUA-SCADA')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_tasks_preview.png" alt="Preview reporte AQUA-SCADA">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-bottom">
+        <div>
+          <div class="proto-bottom-label">Métricas extraídas</div>
+          <div class="metrics-list">
+            <div class="metric-item">
+              <div class="metric-name">SER — Straightness Efficiency Ratio</div>
+              <div class="metric-desc">Eficiencia de trayectoria. Valores altos: movimiento directo; bajos: vacilación o búsqueda.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">TTC — Time to Commitment</div>
+              <div class="metric-desc">Tiempo hasta compromiso motor estable hacia el objetivo. Proxy de latencia de decisión.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">AE — Angular Entropy</div>
+              <div class="metric-desc">Entropía de cambios direccionales. Baja: intención clara; alta: exploración o carga elevada.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">CDR — Competitor Distraction Ratio</div>
+              <div class="metric-desc">Tiempo sobre elementos distintos al objetivo (umbral 150 ms). Cuantifica competencia atencional.</div>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-col">
+          <div class="proto-bottom-label">Reporte</div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_tasks.pdf','Reporte · AQUA-SCADA')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_tasks_preview.png" alt="Preview reporte AQUA-SCADA">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── P02: SIMULATION ── -->
+  <div class="protocol-block reveal">
+
+    <div class="proto-main">
+      <div class="proto-header">
+        <div>
+          <div class="proto-name">
+            <span>Telemetría Dual en<br>Entornos Inmersivos</span>
+          </div>
+          <div class="proto-domain">Simulation · Entorno simulado · Interfaces de alta densidad · RV/AR</div>
+          <a href="protocols/rov.html" class="proto-ver">Ver protocolo completo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </div>
+      </div>
+
+      <div class="proto-media tall" onclick="openMediaOverlay(this)" data-label="BLUEFIN-9 · Simulador ROV">
+        <video src="media/video_simulator_rov.mp4" autoplay loop muted playsinline></video>
+        <span class="expand-badge">Expandir ↗</span>
+      </div>
+
+      <div class="proto-desc-row">
+        <p class="proto-desc">
+          Evalúa comportamiento y usabilidad de interfaces en entornos inmersivos con captura simultánea
+          de telemetría del sistema (velocidad, heading, profundidad, incidentes) y conducta del usuario
+          (cinemática del cursor, gestos de control, dwell). Permite contrastar la respuesta motora del
+          operador con la dinámica del sistema. Extrapolable a contextos de RV/AR, abriendo posibilidades
+          para diseños experimentales en entornos complejos.
+        </p>
+        <div class="proto-pdf-inline">
+          <div class="proto-bottom-label report-label">Reporte de sesión <span class="auto-badge">Autogenerado</span></div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_simulation.pdf','Reporte · BLUEFIN-9')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_simulation_preview.png" alt="Preview reporte BLUEFIN-9">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-bottom">
+        <div>
+          <div class="proto-bottom-label">Métricas · configurables al contexto de evaluación</div>
+          <div class="metrics-list">
+            <div class="metric-item">
+              <div class="metric-name">Telemetría del sistema</div>
+              <div class="metric-desc">Velocidad, heading, profundidad, colisiones capturadas en paralelo al comportamiento del operador.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Cinemática del operador</div>
+              <div class="metric-desc">Velocidad del cursor, gestos de control y dwell ratio por ventana temporal.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Overlay conductual–sistémico</div>
+              <div class="metric-desc">Contraste entre respuesta del operador y dinámica del sistema. Detecta desacoplamientos de control.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Dwell ratio</div>
+              <div class="metric-desc">Proporción de tiempo en reposo frente a gestos activos. Refleja estrategia de monitorización/acción.</div>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-col">
+          <div class="proto-bottom-label">Reporte</div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_simulation.pdf','Reporte · BLUEFIN-9')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_simulation_preview.png" alt="Preview reporte BLUEFIN-9">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── P03: VIGILANCE ── -->
+  <div class="protocol-block reveal">
+
+    <div class="proto-main">
+      <div class="proto-header">
+        <div>
+          <div class="proto-name">
+            <span>Degradación Atencional<br>en Monitorización Continua</span>
+          </div>
+          <div class="proto-domain">Vigilance · Atención sostenida · Decremento · Teoría de Detección de Señales</div>
+          <a href="protocols/sonar.html" class="proto-ver">Ver protocolo completo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </div>
+      </div>
+
+      <div class="proto-media tall" onclick="openMediaOverlay(this)" data-label="SONAR-7 · Vigilancia acústica">
+        <video src="media/video_vigilance.mp4" autoplay loop muted playsinline></video>
+        <span class="expand-badge">Expandir ↗</span>
+      </div>
+
+      <div class="proto-desc-row">
+        <p class="proto-desc">
+          Evalúa degradación atencional y del rendimiento en tareas de monitorización prolongada.
+          Las interfaces se configuran para definir estímulos de ruido, de señal y el dinamismo del
+          entorno digital. Las métricas se basan en la Teoría de Detección de Señales (SDT) con
+          estímulos nativos de la interfaz (sin overlays), garantizando validez ecológica. La captura
+          de sensores fisiológicos a lo largo de ventanas temporales permite anticipar cambios
+          en el rendimiento antes de que se materialicen.
+        </p>
+        <div class="proto-pdf-inline">
+          <div class="proto-bottom-label report-label">Reporte de sesión <span class="auto-badge">Autogenerado</span></div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_vigilance.pdf','Reporte · SONAR-7')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_vigilance_preview.png" alt="Preview reporte SONAR-7">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-bottom">
+        <div>
+          <div class="proto-bottom-label">Métricas SDT</div>
+          <div class="metrics-list">
+            <div class="metric-item">
+              <div class="metric-name">d' — Índice de sensibilidad</div>
+              <div class="metric-desc">Capacidad para distinguir señal del ruido. Independiente del criterio de respuesta.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">β — Criterio de decisión</div>
+              <div class="metric-desc">Umbral de decisión. >1: sesgo conservador; <1: sesgo liberal.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">RT slope — Pendiente de tiempo de reacción</div>
+              <div class="metric-desc">Evolución del tiempo de respuesta por ventana. Pendiente positiva: proxy de fatiga atencional.</div>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-col">
+          <div class="proto-bottom-label">Reporte</div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_vigilance.pdf','Reporte · SONAR-7')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_vigilance_preview.png" alt="Preview reporte SONAR-7">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section -->
+
+<!-- crosslink to tab 2 -->
+<div class="crosslink">
+  <p class="crosslink-intro">Revisa la implementación de sensores y las superficies de captura aquí:</p>
+  <button class="crosslink-btn" onclick="switchTab('sensores')">
+    <span style="color: rgba(0,0,0,0.85); font-weight: 500;">Sensores e instrumentación</span>
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+  </button>
+</div>
+
+</div><!-- /tab-protocolos -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     TAB 02 — SENSORES E INSTRUMENTACIÓN
+════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-sensores">
+<div class="section">
+
+  <div class="sensors-intro reveal">
+    <div class="sensors-intro-left">
+      <div class="subsection-kicker">Sensores e instrumentación</div>
+      <div class="sensors-title">Instrumentación<br>integrada</div>
+    </div>
+    <div class="sensors-intro-right">
+      <p class="sensors-desc">
+        Integración de sensores accesibles para complementar y contrastar los datos de los eventos
+        de interacción, aplicable a todos los protocolos. La sincronización de rates de muestreo
+        se consigue a través del pipeline central, que unifica los datos en un único registro
+        temporal por sesión.
+      </p>
+    </div>
+  </div>
+
+  <!-- Sensor grid — Blink + Watch -->
+  <div class="sensor-grid reveal">
+    <!-- BLINK -->
+    <div class="sensor-col">
+      <div class="sensor-media-block" onclick="openMediaOverlay(this)" data-label="Blink-rate · Captura facial en tiempo real" style="cursor:zoom-in;">
+        <video src="media/blink_capture.mp4" autoplay loop muted playsinline></video>
+        <span class="expand-badge">Expandir ↗</span>
+      </div>
+      <div class="sensor-ch">CH·01 · Ocular</div>
+      <div class="sensor-name">Blink-rate<br>Detección facial</div>
+      <p class="sensor-desc">
+        Detección de parpadeo vía landmarks faciales (MediaPipe). Frecuencia y duración del parpadeo como proxy de
+        fatiga ocular y carga cognitiva. Opera en tiempo real sin interrumpir la sesión y se sincroniza
+        con el resto del pipeline mediante timestamp compartido. Funcional en todos los protocolos, pero idóneo
+        para evaluación de atención sostenida.
+      </p>
+      <div class="data-card">
+        <div class="dc-header">
+          <span class="dc-title">Sesión 20260524_152222 · Métricas por ventana</span>
+          <span class="dc-badge">n = 40 parpadeos</span>
+        </div>
+        <table class="dc-table">
+          <thead><tr>
+            <th>Ventana (s)</th><th>BR (bpm)</th><th>EAR medio</th><th>PERCLOS (%)</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>10 – 70</td><td class="dc-hi">21.0</td><td>0.258</td><td>4.45</td></tr>
+            <tr><td>40 – 100</td><td class="dc-hi">21.0</td><td>0.260</td><td>4.51</td></tr>
+            <tr><td>70 – 130</td><td class="dc-hi">16.0</td><td>0.262</td><td>4.62</td></tr>
+            <tr><td>100 – 160</td><td class="dc-alert">15.8</td><td>0.252</td><td class="dc-alert">7.11</td></tr>
+          </tbody>
+        </table>
+        <div class="dc-plot" onclick="openMediaOverlay(this)" data-label="Blink-rate · Trace completo de sesión">
+          <img src="media/blink_rate_plot.png" alt="Trace blink rate">
+          <span class="expand-badge" style="opacity:0.6;">Ver trace ↗</span>
+        </div>
+        <div class="dc-footer">
+          <span class="dc-note">EAR · Blink Rate · PERCLOS (ventanas deslizantes de 60 s)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SMARTWATCH -->
+    <div class="sensor-col">
+      <div class="sensor-media-block" onclick="openMediaOverlay(this)" data-label="Smartwatch · Acelerometría y giroscopio" style="cursor:zoom-in;">
+        <video src="media/smartwatch_capture.mp4" autoplay loop muted playsinline></video>
+        <span class="expand-badge">Expandir ↗</span>
+      </div>
+      <div class="sensor-ch">CH·02 · Motor</div>
+      <div class="sensor-name">Smartwatch<br>Acelerometría y giroscopio</div>
+      <p class="sensor-desc">
+        Captura continua de movimiento del brazo dominante vía acelerómetro y giroscopio.
+        Complementa el indicador de frecuencia de parpadeo aportando un proxy de agitación motora y arousal fisiológico.
+        Permite detectar picos de activación correlacionados con eventos de interfaz.
+      </p>
+      <div class="data-card">
+        <div class="dc-header">
+          <span class="dc-title">Sesión ID_05 · Accel RMS por segundo (160 s)</span>
+        </div>
+        <div class="dc-chart">
+          <canvas id="watchChart" width="480" height="80" style="width:100%;height:80px;display:block;"></canvas>
+          <div class="dc-axis"><span>0 s</span><span>160 s</span></div>
+          <div class="dc-legend">
+            <span style="color:rgba(99,210,255,0.65);">— Accel RMS</span>
+            <span style="color:rgba(255,200,80,0.65);">— Gyro RMS</span>
+          </div>
+        </div>
+        <table class="dc-table">
+          <thead><tr>
+            <th>Ventana (s)</th><th>Accel RMS (g)</th><th>Accel σ</th><th>Gyro RMS</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>0 – 60</td><td class="dc-hi">0.0233</td><td>0.0116</td><td>0.0016</td></tr>
+            <tr><td>30 – 90</td><td class="dc-hi">0.0238</td><td>0.0126</td><td>0.0016</td></tr>
+            <tr><td>60 – 120</td><td class="dc-alert">0.3119</td><td class="dc-alert">0.2958</td><td class="dc-alert">0.3510</td></tr>
+            <tr><td>90 – 150</td><td class="dc-alert">0.2960</td><td class="dc-alert">0.2787</td><td class="dc-alert">0.3304</td></tr>
+          </tbody>
+        </table>
+        <div class="dc-footer">
+          <span class="dc-note">Accel RMS · Gyro RMS (ventanas deslizantes de 60 s · pico motor t≈100 s)</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /sensor-grid -->
+
+  <!-- SALIENCY -->
+  <div class="subsection reveal">
+    <div class="subsection-header">
+      <div>
+        <div class="subsection-kicker">Saliencia atencional</div>
+        <div class="subsection-title">Modelo predictivo<br>sobre interfaz real</div>
+      </div>
+      <p class="subsection-desc">
+        Modelo de saliencia predictiva aplicado sobre la interfaz. Permite identificar qué elementos
+        pueden ser potenciales competidores por la atención visual, y contrastar las puntuaciones
+        de saliencia con los patrones reales de interacción, validando o cuestionando las
+        decisiones de diseño.
+      </p>
+    </div>
+    <div class="media-label-bar">
+      <span class="media-label-text">Comparativa · Interfaz A vs B</span>
+      <span class="media-badge">Interactivo</span>
+    </div>
+    <iframe class="saliency-iframe" src="media/compare_ab.html" title="Saliencia A/B"></iframe>
+  </div>
+
+  <!-- DESKTOP vs TABLET -->
+  <div class="subsection reveal">
+    <div class="subsection-header">
+      <div>
+        <div class="subsection-kicker">Superficie de captura</div>
+        <div class="subsection-title">Desktop y tablet<br>con arquitectura unificada</div>
+      </div>
+      <p class="subsection-desc">
+        La herramienta está adaptada tanto para ordenador como en dispositivos táctiles. La arquitectura unificada
+        detecta el tipo de dispositivo y adapta la captura de eventos automáticamente, permitiendo plantear
+        diseños experimentales en diferentes superficies de captura sin alterar la lógica de captura.
+      </p>
+    </div>
+    <div class="media-label-bar">
+      <span class="media-label-text">Captura · Desktop vs Tablet</span>
+      <span class="media-badge">Comparativa</span>
+    </div>
+    <div class="compare-split">
+      <div class="compare-pane" onclick="openMediaOverlay(this)" data-label="Captura Desktop">
+        <video src="media/compare_desktop.mp4" autoplay loop muted playsinline></video>
+        <span class="compare-label">Desktop</span>
+      </div>
+      <div class="compare-pane" onclick="openMediaOverlay(this)" data-label="Captura Tablet">
+        <video src="media/compare_tablet.mp4" autoplay loop muted playsinline></video>
+        <span class="compare-label">Tablet</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section -->
+</div><!-- /tab-sensores -->
+
+<!-- ══ CONTACTO ══════════════════════════════════════════ -->
+<div class="contact-wrap" id="contacto">
+  <div class="contact-inner">
+    <div>
+      <h2 class="contact-headline">Gracias por revisar<br>mi trabajo</h2>
+      <p class="contact-sub">Estoy abierto a colaboraciones, tanto para seguir desarrollando esta línea como para explorar diferentes proyectos. A través de mis datos de contacto, puedes escribirme para explorar oportunidades de colaboración.</p>
+    </div>
+    <div class="contact-links">
+      <a href="mailto:andresangarita041@gmail.com" class="contact-link">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 5l7 5 7-5"/></svg>
+        andresangarita041@gmail.com
+      </a>
+      <a href="https://www.linkedin.com/in/andres-felipe-angarita-noriega-8aa47032b/" target="_blank" class="contact-link">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM2 6.5h3V14H2V6.5zM6.5 6.5H9v1.05C9.45 6.9 10.35 6.3 11.5 6.3c2.2 0 3 1.5 3 3.5V14h-3v-3.5c0-1-.3-1.7-1.1-1.7-.6 0-1 .4-1.2.85-.05.15-.07.35-.07.55V14H6.5V6.5z"/></svg>
+        LinkedIn — Andrés Angarita
+      </a>
+      <a href="https://github.com/andres-angarita" target="_blank" class="contact-link">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .5a7.5 7.5 0 00-2.37 14.62c.37.07.5-.16.5-.36v-1.27c-2.08.45-2.52-.9-2.52-.9-.34-.86-.83-1.09-.83-1.09-.68-.46.05-.45.05-.45.75.05 1.14.77 1.14.77.67 1.14 1.74.81 2.17.62.07-.48.26-.81.47-.99-1.66-.19-3.41-.83-3.41-3.7 0-.82.29-1.48.77-2-.08-.19-.33-.96.07-2 0 0 .63-.2 2.06.77a7.17 7.17 0 013.76 0c1.43-.97 2.06-.77 2.06-.77.4 1.04.15 1.81.07 2 .48.52.77 1.18.77 2 0 2.88-1.75 3.51-3.42 3.7.27.23.51.69.51 1.39v2.06c0 .2.13.44.51.36A7.5 7.5 0 008 .5z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-txt">© 2026 Andrés Angarita</span>
+  <span class="footer-txt">Trace · Telemetría conductual</span>
+  <span class="footer-txt">España</span>
+</footer>
+
+<!-- ══ OVERLAY ════════════════════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="overlay-inner">
+    <button class="overlay-close" onclick="closeOverlay()">Cerrar <kbd>Esc</kbd></button>
+    <div id="overlay-content" style="width:100%;height:100%;"></div>
+    <div class="overlay-cap" id="overlay-caption"></div>
+  </div>
+</div>
+
+<script>
+/* ── Overlay ─────────────────────────────────────── */
+function openMediaOverlay(container) {
+  const media = container.querySelector('img, video');
+  if (!media) return;
+  const label = container.dataset.label || '';
+  const c = document.getElementById('overlay-content');
+  if (media.tagName === 'IMG') {
+    c.innerHTML = '<div class="overlay-media-wrap" onclick="closeOverlay()"><img src="' + media.src + '" alt=""></div>';
+  } else {
+    c.innerHTML = '<div class="overlay-media-wrap" onclick="closeOverlay()"><video src="' + media.src + '" autoplay loop muted playsinline></video></div>';
+  }
+  document.getElementById('overlay-caption').textContent = label;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function openPdfOverlay(src, label) {
+  const c = document.getElementById('overlay-content');
+  c.innerHTML = '<div class="overlay-pdf-wrap"><iframe src="' + src + '"></iframe></div>';
+  document.getElementById('overlay-caption').textContent = label;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('overlay-content').innerHTML = '';
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeOverlay();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+
+/* ── Task switcher ───────────────────────────────── */
+function switchTask(btn, src) {
+  document.querySelectorAll('.task-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const img = document.getElementById('scada-replay');
+  img.style.opacity = '0';
+  setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 180);
+}
+
+/* ── Tab switcher ────────────────────────────────── */
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes("'" + id + "'"));
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + id);
+  });
+  const workspace = document.getElementById('workspace');
+  const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 52;
+  const workspaceAbsTop = workspace.offsetTop;
+  if (window.scrollY > workspaceAbsTop - navH - 10) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.dispatchEvent(new CustomEvent('traceTabVisible', { detail: id }));
+}
+
+/* ── Scroll reveal ───────────────────────────────── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ── Watch chart ─────────────────────────────────── */
+(function() {
+  const watchData = [
+    {t:0,a:0.01885,g:0.00148},{t:7,a:0.01555,g:0.00170},{t:8,a:0.02073,g:0.00145},
+    {t:9,a:0.01841,g:0.00146},{t:10,a:0.01844,g:0.00145},{t:11,a:0.01815,g:0.00149},
+    {t:12,a:0.02028,g:0.00149},{t:13,a:0.02262,g:0.00152},{t:14,a:0.01820,g:0.00146},
+    {t:15,a:0.01897,g:0.00150},{t:16,a:0.02102,g:0.00146},{t:17,a:0.02564,g:0.00165},
+    {t:18,a:0.02305,g:0.00154},{t:19,a:0.03734,g:0.00284},{t:20,a:0.01954,g:0.00148},
+    {t:25,a:0.02713,g:0.00183},{t:26,a:0.04812,g:0.00253},{t:30,a:0.02714,g:0.00177},
+    {t:34,a:0.03910,g:0.00178},{t:40,a:0.02281,g:0.00160},{t:50,a:0.01803,g:0.00156},
+    {t:60,a:0.01907,g:0.00145},{t:70,a:0.02998,g:0.00172},{t:80,a:0.02130,g:0.00153},
+    {t:82,a:0.05895,g:0.00331},{t:84,a:0.06345,g:0.00179},{t:98,a:0.64630,g:0.20520},
+    {t:99,a:0.69249,g:0.97280},{t:100,a:1.65925,g:2.07619},{t:101,a:0.83619,g:0.56710},
+    {t:102,a:0.40047,g:0.10093},{t:104,a:0.11749,g:0.01077},{t:110,a:0.02384,g:0.00231},
+    {t:120,a:0.03019,g:0.00205},{t:130,a:0.02587,g:0.00193},{t:140,a:0.01951,g:0.00177},
+    {t:150,a:0.03661,g:0.00247},{t:157,a:0.16044,g:0.02726},{t:158,a:1.96670,g:2.10125},
+    {t:160,a:0.58600,g:0.34748}
+  ];
+
+  function drawChart() {
+    const canvas = document.getElementById('watchChart');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    if (!W || !H) return;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const pad = {l:2, r:2, t:4, b:2};
+    const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+    const cap = 0.5, maxT = 160;
+    const xP = t => pad.l + (t / maxT) * cW;
+    const yP = v => pad.t + cH - Math.min(v / cap, 1) * cH;
+
+    // grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    [0.1,0.2,0.3,0.4].forEach(v => {
+      ctx.beginPath(); ctx.moveTo(pad.l, yP(v)); ctx.lineTo(pad.l+cW, yP(v)); ctx.stroke();
+    });
+
+    // peak band
+    ctx.fillStyle = 'rgba(244,150,12,0.06)';
+    ctx.fillRect(xP(97), pad.t, xP(106)-xP(97), cH);
+
+    // gyro
+    ctx.beginPath(); ctx.strokeStyle='rgba(255,200,80,0.5)'; ctx.lineWidth=1;
+    watchData.forEach((d,i)=>{ const x=xP(d.t),y=yP(d.g); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // accel
+    ctx.beginPath(); ctx.strokeStyle='rgba(99,210,255,0.8)'; ctx.lineWidth=1.5;
+    watchData.forEach((d,i)=>{ const x=xP(d.t),y=yP(d.a); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // peak label
+    ctx.fillStyle='rgba(244,150,12,0.7)';
+    ctx.font=`${7}px monospace`; ctx.textAlign='center';
+    ctx.fillText('pico', (xP(97)+xP(106))/2, pad.t+8);
+  }
+
+  if (document.readyState==='loading') {
+    document.addEventListener('DOMContentLoaded', ()=>setTimeout(drawChart,50));
+  } else { setTimeout(drawChart,50); }
+  window.addEventListener('resize', drawChart);
+  window.addEventListener('traceTabVisible', e => {
+    if (e.detail==='sensores') setTimeout(drawChart, 80);
+  });
+})();
+
+/* ── Trace carousel ──────────────────────────────── */
+(function() {
+  const imgs    = document.querySelectorAll('.carousel-frame img');
+  const dots    = document.querySelectorAll('.carousel-dot');
+  const total   = imgs.length;
+  let current   = 0;
+  let timer     = null;
+
+  function goTo(idx) {
+    imgs[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    // reset fill animation by replacing the dot node
+    const oldFill = dots[current].querySelector('.carousel-dot-fill');
+    const newFill = oldFill.cloneNode(true);
+    oldFill.replaceWith(newFill);
+
+    current = (idx + total) % total;
+    imgs[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  function next() { goTo(current + 1); }
+
+  function start() {
+    clearInterval(timer);
+    timer = setInterval(next, 6000);
+  }
+
+  // Allow click on dots for manual nav
+  dots.forEach((dot, i) => {
+    dot.style.cursor = 'pointer';
+    dot.addEventListener('click', () => { goTo(i); start(); });
+  });
+
+  start();
+})();
+</script>
+</body>
+</html>
