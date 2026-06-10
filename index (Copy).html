@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proyecto de investigación — Análisis conductual en interfaces · Andrés Angarita</title>
+<title>Trace — Andrés Angarita</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -274,7 +274,7 @@ nav {
   display: grid;
   grid-template-columns: 1fr 480px;
   gap: 5rem;
-  align-items: center;
+  align-items: start;
 }
 .trace-left {}
 .trace-kicker {
@@ -1248,7 +1248,7 @@ footer {
 <nav>
   <a href="#" class="nav-logo">
     <span class="nav-pip"></span>
-    Análisis conductual · Interfaces
+    Trace
   </a>
   <div class="nav-right">
     <ul class="nav-links">
@@ -1275,9 +1275,11 @@ footer {
         de la medición.
       </p>
       <p class="hero-sub" style="margin-top:1rem">
-        El sistema está en activo desarrollo, abierto a aplicación en contextos de
+        Trace es un sistema en activo desarrollo, abierto a aplicación en contextos de
         <strong>evaluación de interfaces</strong>, <strong>investigación aplicada</strong> y
-        <strong>validación en entornos de alta criticidad</strong>.
+        <strong>validación en entornos de alta criticidad</strong>. Si evalúas interfaces operacionales,
+        el sistema permite ir más allá del cuestionario y la sesión de usabilidad tradicional,
+        capturando el comportamiento tal como ocurre, sobre la interfaz real y sin instrumentación invasiva.
       </p>
     </div>
     <div class="hero-right reveal" style="transition-delay:0.12s">
@@ -1298,12 +1300,12 @@ footer {
   <div class="trace-inner">
     <div class="trace-left reveal">
       <div class="trace-kicker">Proyecto de investigación · Telemetría conductual</div>
-      <h2 class="trace-title">Sistema de análisis<br>conductual en interfaces</h2>
+      <h2 class="trace-title">Trace</h2>
       <p class="trace-desc">
         Sistema de telemetría conductual para el modelado del comportamiento de usuario
         y la evaluación de interfaces en contextos variados. Soporta protocolos basados en
         tareas dirigidas a objetivos, entornos inmersivos, control de sistemas ciberfísicos
-        y monitorización atencional prolongada, y admite adaptaciones a otros protocolos.
+        y monitorización atencional prolongada.
         Captura eventos de interacción (trayectorias, gestos táctiles, tiempos de decisión)
         y extrae métricas compuestas <strong>sin instrumentación invasiva</strong>, sobre cualquier interfaz
         y sin modificar su lógica. Los protocolos pueden integrar módulos de sensores fisiológicos
@@ -1566,6 +1568,126 @@ footer {
     </div>
   </div>
 
+
+  <!-- ── P04: CYBERPHYSICAL ── -->
+  <div class="protocol-block reveal">
+
+    <div class="proto-main">
+      <div class="proto-header">
+        <div>
+          <div class="proto-name">
+            <span>Control de Sistemas<br>Ciberfísicos en Entornos Simulados</span>
+          </div>
+          <div class="proto-domain">Simulation · Control remoto · Interacción ciberfísica · Interfaces de alta densidad</div>
+          <!-- Placeholder: enlace a subpágina del protocolo cuando esté lista -->
+          <a href="protocols/cyberphysical.html" class="proto-ver">Ver protocolo completo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </div>
+      </div>
+
+      <!-- Video principal: Stonefish tercera persona -->
+      <div class="proto-media tall p04-main-media" onclick="openMediaOverlay(this)" data-label="Stonefish · Simulador ROV — tercera persona">
+        <video id="p04-sim" src="media/video_stonefish_rov.mp4" autoplay loop muted playsinline></video>
+        <span class="expand-badge">Expandir ↗</span>
+      </div>
+
+      <!-- Fila inferior: webcam operador + controller tablet -->
+      <div class="p04-bottom-row">
+
+        <!-- Canal ocular: webcam -->
+        <div class="p04-bottom-cell">
+          <div class="p04-sub-media" onclick="openMediaOverlay(this)" data-label="Stonefish · Operador — canal ocular">
+            <video id="p04-cam" src="media/video_stonefish_webcam.mp4" autoplay loop muted playsinline></video>
+            <span class="expand-badge">Expandir ↗</span>
+          </div>
+          <div class="p04-sub-caption">
+            <span class="p04-ctrl-label">CH · ROV CAM</span>
+            <span class="p04-ctrl-desc">Webcam simulada del ROV. Replica la perspectiva de cámara embarcada en condiciones reales — incluye control de pan/tilt y HUD integrado, permitiendo evaluar la interacción con la cámara como parte del flujo de control.</span>
+          </div>
+        </div>
+
+        <!-- Canal motor: controller tablet -->
+        <div class="p04-bottom-cell">
+          <div class="p04-sub-media" onclick="openMediaOverlay(this)" data-label="Stonefish · Hardware de control — tablet joystick">
+            <video id="p04-ctrl" src="media/video_stonefish_controller.mp4" autoplay loop muted playsinline></video>
+            <span class="expand-badge">Expandir ↗</span>
+          </div>
+          <div class="p04-sub-caption">
+            <span class="p04-ctrl-label">CH · MOTOR</span>
+            <span class="p04-ctrl-desc">Input físico del operador — tablet Galaxy Tab S9+ con joystick táctil. Captura en condiciones de uso real, no simulado.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="proto-desc-row">
+        <p class="proto-desc">
+          Evalúa el comportamiento del operador y la calidad del control en sistemas ciberfísicos
+          mediante captura simultánea de telemetría del sistema y conducta motora del operador.
+          El protocolo registra el input de control (distribución de uso por eje, intensidad,
+          suavidad y estrategias emergentes) y lo contrasta con la respuesta dinámica del sistema:
+          trayectoria, velocidad, profundidad y eventos de colisión. La captura se realiza desde
+          hardware físico de control (tablet con joystick táctil), permitiendo evaluar la interfaz
+          en condiciones de uso real, no simulado. El protocolo corre sobre ROS 2, lo que hace que
+          una implementación directa sobre hardware real sea técnicamente viable sin modificaciones
+          sustanciales en el pipeline. Aplicable a contextos de operación remota, control supervisorio
+          y validación de interfaces en sistemas de alta criticidad.
+        </p>
+        <div class="proto-pdf-inline">
+          <div class="proto-bottom-label report-label">Reporte de sesión <span class="auto-badge">Autogenerado</span></div>
+          <div class="pdf-thumb" onclick="openPdfOverlay('media/report_stonefish.pdf','Reporte · Stonefish ROV')">
+            <span class="pdf-badge">PDF</span>
+            <img src="media/report_stonefish_preview.png" alt="Preview reporte Stonefish">
+            <span class="pdf-hint">Abrir ↗</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-bottom">
+        <div>
+          <div class="proto-bottom-label">Telemetría del sistema</div>
+          <div class="metrics-list">
+            <div class="metric-item">
+              <div class="metric-name">Velocidad</div>
+              <div class="metric-desc">Velocidad de desplazamiento del sistema en el entorno. Pico y media por ventana temporal.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Perfil de profundidad</div>
+              <div class="metric-desc">Evolución de la profundidad a lo largo de la sesión, contrastada con la altitud sobre el fondo (sonar) para detectar proximidad a límites críticos.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">THR — Throttle</div>
+              <div class="metric-desc">Throttle medio y pico como proxy de demanda motora del operador sobre el sistema.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Colisiones</div>
+              <div class="metric-desc">Registro de incidentes de contacto con el entorno. Indicador directo de control insuficiente o pérdida de situational awareness.</div>
+            </div>
+          </div>
+
+          <div class="proto-bottom-label" style="margin-top:1.5rem">Cinemática del operador</div>
+          <div class="metrics-list">
+            <div class="metric-item">
+              <div class="metric-name">Distribución de ejes</div>
+              <div class="metric-desc">Proporción de tiempo con deflexión activa por eje de control (HEAVE, SURGE, SWAY, YAW) y su intensidad media (RMS). Revela la estrategia de control y el eje dominante.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Suavidad de control</div>
+              <div class="metric-desc">Variación temporal de la señal de input. Valores altos indican ajustes frecuentes o inestabilidad en el control; valores bajos reflejan control fluido y anticipatorio.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Episodios de latch</div>
+              <div class="metric-desc">Detección de segmentos donde el stick permanece en posición sostenida (cruise control implícito). Indica delegación de control al sistema y refleja estrategias de automatización espontánea.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-name">Actividad de cámara</div>
+              <div class="metric-desc">Evolución del tilt de cámara durante la sesión como indicador de reasignación atencional.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /section -->
 
 <!-- crosslink to tab 2 -->
@@ -1744,7 +1866,7 @@ footer {
   <div class="contact-inner">
     <div>
       <h2 class="contact-headline">Contacto</h2>
-      <p class="contact-sub">Estoy disponible para colaboraciones en proyectos de <strong>evaluación de interfaces</strong>, <strong>investigación aplicada</strong> y <strong>diseño experimental</strong>. A través de mis datos de contacto, puedes escribirme para explorar oportunidades.</p>
+      <p class="contact-sub">Estoy disponible para colaboraciones en proyectos de <strong>evaluación de interfaces</strong>, <strong>investigación aplicada</strong> y <strong>diseño experimental</strong> en contextos de HCI, ergonomía cognitiva y sistemas de alta criticidad. A través de mis datos de contacto, puedes escribirme para explorar oportunidades.</p>
     </div>
     <div class="contact-links">
       <a href="mailto:andresangarita041@gmail.com" class="contact-link">
@@ -1765,7 +1887,7 @@ footer {
 
 <footer>
   <span class="footer-txt">© 2026 Andrés Angarita</span>
-  <span class="footer-txt">Proyecto de investigación · Análisis conductual en interfaces</span>
+  <span class="footer-txt">Trace · Telemetría conductual</span>
   <span class="footer-txt">España</span>
 </footer>
 
