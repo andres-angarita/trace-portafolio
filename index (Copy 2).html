@@ -473,54 +473,6 @@ nav {
 .proto-ver:hover { border-color: var(--mark); gap: 12px; }
 .proto-ver svg { width: 9px; height: 9px; }
 
-.proto-soon {
-  font-family: var(--mono); font-size: 0.56rem;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--text-lo); font-weight: 500;
-  display: inline-flex; align-items: center; gap: 8px;
-  margin-top: 0.75rem;
-  border: 1px dashed var(--border-mid);
-  padding: 0.5rem 1rem;
-}
-
-/* P04 — media (izquierda, ampliada) + métricas apiladas (derecha) */
-.p04-row {
-  display: grid;
-  grid-template-columns: minmax(300px, 480px) 1fr;
-  gap: 2.5rem;
-  align-items: start;
-  margin-bottom: 2.25rem;
-}
-.p04-row .proto-media.portrait {
-  margin: 0;
-  max-width: 100%;
-}
-.p04-info { display: flex; flex-direction: column; gap: 1.75rem; }
-.p04-metrics-row {
-  margin-bottom: 1.5rem;
-}
-.p04-metrics-group + .p04-metrics-group { margin-top: 1.5rem; }
-.p04-desc-below { max-width: 760px; }
-.p04-report-soon {
-  font-family: var(--mono); font-size: 0.7rem;
-  color: var(--text-lo); letter-spacing: 0.02em;
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
-}
-.p04-report-soon .auto-badge {
-  font-size: 0.46rem; letter-spacing: 0.1em;
-  color: var(--text-lo);
-  border: 1px solid var(--border-mid);
-  padding: 0.1rem 0.4rem;
-  background: transparent;
-  border-radius: 2px;
-  margin-left: 0.5rem;
-}
-@media (max-width: 760px) {
-  .p04-row { grid-template-columns: 1fr; align-items: stretch; }
-  .p04-metrics-row { grid-template-columns: 1fr; }
-}
-
 
 .proto-status {
   font-family: var(--mono); font-size: 0.52rem;
@@ -583,11 +535,6 @@ nav {
     0 2px 8px rgba(0,0,0,0.4);
 }
 .proto-media.tall { aspect-ratio: 16/9; }
-.proto-media.portrait {
-  aspect-ratio: 4/5;
-  max-width: 380px;
-  margin-left: auto; margin-right: auto;
-}
 .proto-media img, .proto-media video {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
@@ -1487,7 +1434,7 @@ footer {
       <div class="proto-header">
         <div>
           <div class="proto-name">
-            <span>Telemetría en<br>Entornos Inmersivos</span>
+            <span>Telemetría Dual en<br>Entornos Inmersivos</span>
           </div>
           <div class="proto-domain">Simulation · Entorno simulado · Interfaces de alta densidad · RV/AR</div>
           <a href="protocols/rov.html" class="proto-ver">Ver protocolo completo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
@@ -1615,83 +1562,6 @@ footer {
             <span class="pdf-hint">Abrir ↗</span>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── P04: TELEOPERACIÓN REAL ── -->
-  <div class="protocol-block reveal">
-
-    <div class="proto-main">
-      <div class="proto-header">
-        <div>
-          <div class="proto-name">
-            <span>Telemetría Dual en<br>Teleoperación Real</span>
-          </div>
-          <div class="proto-domain">Teleoperación · Sistema físico real · ROS 2 · Validación ecológica</div>
-          <span class="proto-soon">Documentación completa · Próximamente</span>
-        </div>
-      </div>
-
-      <div class="p04-row">
-        <div class="proto-media portrait" onclick="openMediaOverlay(this)" data-label="Teleoperación real · ROV en tanque controlado">
-          <video src="media/rov_demo.mp4" autoplay loop muted playsinline></video>
-          <span class="expand-badge">Expandir ↗</span>
-        </div>
-
-        <div class="p04-info">
-          <div class="p04-metrics-row">
-            <div class="p04-metrics-group">
-              <div class="proto-bottom-label">Métricas de proceso — cómo controla</div>
-              <div class="metrics-list">
-                <div class="metric-item">
-                  <div class="metric-name">Suavidad de control</div>
-                  <div class="metric-desc">Índice de fluidez del input. Valores altos: control continuo; bajos: ajustes discretos o bruscos.</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-name">Erraticidad del joystick</div>
-                  <div class="metric-desc">Irregularidad del input por eje (jerk activo, picos bruscos). Proxy de incertidumbre motora.</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-name">Latencia de input (mediana / p95)</div>
-                  <div class="metric-desc">Retardo entre comando y respuesta del sistema. Sensible a la calidad percibida del control.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="p04-metrics-group">
-              <div class="proto-bottom-label">Métricas de output — qué resultado logra</div>
-              <div class="metrics-list">
-                <div class="metric-item">
-                  <div class="metric-name">SER — Straightness Efficiency Ratio</div>
-                  <div class="metric-desc">Eficiencia de trayectoria hacia el objetivo. Valores altos: recorrido directo.</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-name">TTC — Time to Commitment</div>
-                  <div class="metric-desc">Tiempo hasta alcanzar el objetivo tras el armado del sistema.</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-name">Estabilidad de mantenimiento (σ)</div>
-                  <div class="metric-desc">Dispersión de posición sobre el objetivo una vez alcanzado. Precisión de sostenimiento.</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-name">Correcciones 3D</div>
-                  <div class="metric-desc">Número de tramos de alejamiento + reversión con sobrecorrección. Cuantifica error de aproximación.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <p class="proto-desc p04-desc-below">
-        Extensión del protocolo de simulación: mismo pipeline de captura y métricas transferidas, ejecutadas esta vez sobre un ROV simulado en Stonefish, operado desde
-        tablet con joystick táctil. Evalúa el comportamiento del operador y la calidad de control en
-        condiciones simuladas, con potencial transferencia a contextos reales.
-      </p>
-
-      <div class="p04-report-soon">
-        Reporte de sesión <span class="auto-badge">Próximamente</span>
       </div>
     </div>
   </div>
